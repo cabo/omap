@@ -311,7 +311,7 @@ the data.
 ~~~ CDDL
 anymap = {* any => any}
 
-tbd128 = #6.128(anymap) ; key uniqueness implicit in map representation
+tbd128 = #6.128(anymap)
 tbd129 = #6.129([* (any, any)] .umm anymap)
 tbd130 = #6.130([* ((any .unique "mm"), any)] .omm anymap)
 tbd131 = #6.131([* (any, any)] .omm anymap)
@@ -327,6 +327,10 @@ tbd139<k,v> = #6.139([* (k, v)] .omm anymap)
 {: #tag-cddl title="Recommended typenames for CDDL"}
 
 \[fill in better names for tbdnnn]
+
+Note that there is no need to call out the uniqueness of the keys
+explicitly in tbd128, tbd132, or tbd136, as the use of maps as a
+representation format already provides that key uniqueness.
 
 IANA Considerations
 ==================
