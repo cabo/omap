@@ -328,6 +328,19 @@ tbd139<k,v> = #6.139([* (k, v)] .omm anymap)
 IANA Considerations
 ==================
 
+## Tags
+
+
+IANA is requested to allocate the tags of {{tag-new}} in the CBOR tags
+registry {{-tags}}, using this document as the specification
+reference.
+
+The allocations are requested to be assigned from the "specification
+required" space (24..255).
+
+
+## CDDL control operators
+
 This document requests IANA to register the contents of
 {{tbl-iana-reqs}} into the CDDL Control Operators registry {{-control}}:
 
