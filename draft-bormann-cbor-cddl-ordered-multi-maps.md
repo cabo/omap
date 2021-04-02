@@ -429,7 +429,7 @@ Legend:
 - `D`: Suitable dynamic type, such as `std::any` or `std::variant`
 - `Map`: `std::map` or `std::unordered_map`
 - `MultiMap`: `std::multimap` or `std::unordered_multimap`
-- `Sequence`: Sequence container that preserves order (e.g. `vector`)
+- `Sequence`: Sequence container that preserves order (e.g. `std::vector`)
 - `Pair`: Object containing a key and a value, such as `std::pair`, or `std::tuple`.
 
 Note that a C++ `std::map` stores its key-value pairs in a sorted fashion, and
