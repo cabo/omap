@@ -92,14 +92,14 @@ and CBOR major type 5; this is not called out explicitly.
 
 This document defines a consolidated set of CBOR tags for map-like entities involving key-value pairs. These tags encode the following meta-data concerning map-like entities:
 
-- the uniformity of the key and value types,
+- the homogeneity of the key and value types,
 - the preservation of the insertion order of the key-value pairs,
 - the uniqueness of the keys, and,
 - the major type used to encode the key-value pairs.
 
 ## Summary
 
-| Tag | LSBs | Uniform Value | Uniform Key | Ordering  | Duplicate Keys Allowed | Data Item | Related Tag |
+| Tag | LSBs | Homogeneous Value | Homogeneous Key | Ordering  | Duplicate Keys Allowed | Data Item | Related Tag |
 | --- | ---- | ------------- | ----------- | --------- | ---------------------- | --------- | ----------- |
 | 128 | 0000 | No            | No          | Unordered | No                     | map       | 259         |
 | 129 | 0001 | No            | No          | Unordered | Yes                    | array     | TDB280*     |
@@ -129,12 +129,12 @@ languages that are related to the tags being defined.
 Bits 2/3 of the tag provides information on the map's key and value types:
 
 - 0b00xx Unspecified: There is no specified type for the map's keys and values
-- 0b01xx Uniform Key: All keys have the same data type
-- 0b10xx Uniform Key/Value: All values have the same data type in addition to all keys having the same data type (the types for keys and values may be distinct).
+- 0b01xx Homogeneous Key: All keys have the same data type
+- 0b10xx Homogeneous Key/Value: All values have the same data type in addition to all keys having the same data type (the types for keys and values may be distinct).
 
-The semantics for uniformity shall be the same as for RFC8746 homogenous arrays (tag 41). That is, "which CBOR data items constitute elements of the same application type is specific to the application" (RFC8746, subsection 3.2).
+The semantics for homogeneity shall be the same as for RFC8746 homogeneous arrays (tag 41). That is, "which CBOR data items constitute elements of the same application type is specific to the application" (RFC8746, subsection 3.2).
 
-Maps with arbitrary keys and uniform values are considered unusual, so they are left out of this specification in order to reduce the number of tags allocated (12 instead of 16).
+Maps with arbitrary keys and homogeneous values are considered unusual, so they are left out of this specification in order to reduce the number of tags allocated (12 instead of 16).
 
 ## Ordering
 
@@ -185,7 +185,7 @@ The above defined tag 128 may be used instead to guide a JavaScript decoder into
 
 Specification: https://github.com/ecorm/cbor-tag-text-key-map
 
-The above defined tag 132 may be used instead to guide a decoder into interpreting a CBOR map as a JavaScript-like Object having only text string keys. The decoder would have to verify the first key to establish that the map has uniform text string keys.
+The above defined tag 132 may be used instead to guide a decoder into interpreting a CBOR map as a JavaScript-like Object having only text string keys. The decoder would have to verify the first key to establish that the map has homogeneous text string keys.
 
 ### Tag TBD279 ###
 
@@ -255,7 +255,7 @@ element pairs in the array matters, while `.umm` defines an unordered
 (multi)map, i.e., data items that present the same set of key/value
 pairs in different orders are equivalent.
 
-Note that the ability to specify specific ("uniform") types is
+Note that the ability to specify specific ("homogeneous") types is
 provided by the ability to specify the target type, as in the example above.
 
 Note that there is not strictly a need to define a control operator for building
@@ -388,7 +388,7 @@ The *Decodable Tags* column in the following tables, are for data items can be d
 - the ordering of the keys, and,
 - the data types of **every** keys/value pair.
 
-It may however be necessary to inspect the data types of the **first** key-value pair in the case of tags representing uniform keys/values.
+It may however be necessary to inspect the data types of the **first** key-value pair in the case of tags representing homogeneous keys/values.
 
 ### ECMAScript
 
