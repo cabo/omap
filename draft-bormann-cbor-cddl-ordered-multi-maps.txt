@@ -592,7 +592,7 @@ A.1.3.  C++
    *  "MultiMap": "std::multimap" or "std::unordered_multimap"
 
    *  "Sequence": Sequence container that preserves order (e.g.
-      "vector")
+      "std::vector")
 
    *  "Pair": Object containing a key and a value, such as "std::pair",
       or "std::tuple".
