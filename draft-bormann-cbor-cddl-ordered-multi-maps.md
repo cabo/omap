@@ -121,6 +121,9 @@ This document defines a consolidated set of CBOR tags for map-like entities invo
 
 \[The intention of the present document is to obviate the need for defining TBD279/TBD280.]
 
+{{proglan}} provides information about constructs in a few programming
+languages that are related to the tags being defined.
+
 ## Key/Value Type
 
 Bits 2/3 of the tag provides information on the map's key and value types:
@@ -364,7 +367,10 @@ The security considerations of {{-cddl}} apply.
 
 # Implementation Considerations
 
-## Programming Language Containers (Informative)
+This non-normative appendix provides information about the use on
+implementations of the tags and control operators defined.
+
+## Programming Language Containers (Informative) {#proglan}
 
 The following subsections describe how the tags in this document relate to various programming language containers. Containers that are not part of the programming language or its standard libraries are not considered here.
 
@@ -425,6 +431,9 @@ Legend:
 Note that a C++ `std::map` stores its key-value pairs in a sorted fashion, and
 does **not** preserve insertion order in the same manner as Python's `OrderedDict`.
 
+## CDDL Implementation Considerations
+
+TBD
 
 Acknowledgements
 ================
