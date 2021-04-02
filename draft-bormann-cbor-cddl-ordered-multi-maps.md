@@ -82,8 +82,11 @@ Terminology
 {::boilerplate bcp14}
 
 This specification uses terminology from {{-cbor}} and {{-cddl}}.
-In particular, with respect to control operators, "target" refers to
+In particular, with respect to CDDL control operators, "target" refers to
 the left hand side operand, and "controller" to the right hand side operand.
+The terms "array" and "map" (if unadorned) refer to CBOR major type 4
+and CBOR major type 5; this is not called out explicitly.
+
 
 # CBOR tags for map-like data items
 
@@ -147,25 +150,24 @@ Bit 0 of the tag represents the uniqueness of the map's keys.
 ## Data Item
 
 All these map-like data items could be represented as a tag with an
-enclosed array (CBOR major type 4) of alternating key-value pairs, as
+enclosed array of alternating key-value pairs, as
 in:
 
 ~~~CBORdiag
 129(["key1", 1, "key2", 2])
 ~~~
 
-However, representing the key-value pairs as a CBOR map (major type 5)
+However, representing the key-value pairs as a CBOR map
 for those cases where this is possible enables generic decoders that
 are oblivious of these tags to represent the data in a more
 appropriate platform type.
 
-Specifically, the key-value pairs are represented as a map (major type
-5) if and only if
+Specifically, the key-value pairs are represented as a map if and only if
 
 - the ordering is unspecified and
 - the keys are unique;
 
-they are represented as an array (major type 4) of alternating keys
+they are represented as an array of alternating keys
 and values otherwise.
 
 ## Related Tags (Informative)
