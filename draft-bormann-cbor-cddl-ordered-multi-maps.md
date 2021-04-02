@@ -90,7 +90,7 @@ and CBOR major type 5; this is not called out explicitly.
 
 # CBOR tags for map-like data items
 
-This document proposes a consolidated set of CBOR tags for map-like entities involving key-value pairs. These tags encode the following meta-data concerning map-like entities:
+This document defines a consolidated set of CBOR tags for map-like entities involving key-value pairs. These tags encode the following meta-data concerning map-like entities:
 
 - the uniformity of the key and value types,
 - the preservation of the insertion order of the key-value pairs,
@@ -176,25 +176,25 @@ and values otherwise.
 
 Specification: https://github.com/shanewholloway/js-cbor-codec/blob/master/docs/CBOR-259-spec--explicit-maps.md
 
-The above proposed tag 128 may be used instead to guide a JavaScript decoder into interpreting a CBOR map as a JavaScript Map instead of an Object.
+The above defined tag 128 may be used instead to guide a JavaScript decoder into interpreting a CBOR map as a JavaScript Map instead of an Object.
 
 ### Tag 275
 
 Specification: https://github.com/ecorm/cbor-tag-text-key-map
 
-The above proposed tag 132 may be used instead to guide a decoder into interpreting a CBOR map as a JavaScript-like Object having only text string keys. The decoder would have to verify the first key to establish that the map has uniform text string keys.
+The above defined tag 132 may be used instead to guide a decoder into interpreting a CBOR map as a JavaScript-like Object having only text string keys. The decoder would have to verify the first key to establish that the map has uniform text string keys.
 
 ### Tag TBD279 ###
 
 Draft specification: https://github.com/Sekenre/cbor-ordered-map-spec/blob/master/CBOR_Ordered_Map.md
 
-The above proposed tag 130 may be used instead to encode maps where the insertion order of key-value pairs must be preserved.
+The above defined tag 130 may be used instead to encode maps where the insertion order of key-value pairs must be preserved.
 
 ### Tag TDB280 ###
 
 Draft specification: https://github.com/ecorm/cbor-tag-multimap
 
-The above proposed tag 129 may be used instead to encode a multimap as an array of key-value pairs.
+The above defined tag 129 may be used instead to encode a multimap as an array of key-value pairs.
 
 
 CDDL Support for Map-Like Data Items
