@@ -34,7 +34,6 @@ author:
        email: henk.birkholz@sit.fraunhofer.de
   - name: Emile Cormier
     email: emile.cormier.jr@gmail.com
-    org: TBD
 
 contributor:
  - name: Kio Smallwood
@@ -68,7 +67,7 @@ It provides "control operators" as its main language extension point.
 
 The present document defines a number of control operators that enable
 the description of CBOR data structures that make use of the newly
-defined tags or that employ the same underlyinf structures.
+defined tags or that employ the same underlying structures.
 
 
 --- middle
@@ -147,16 +146,27 @@ Bit 0 of the tag represents the uniqueness of the map's keys.
 
 ## Data Item
 
-The map is encoded as major type 5 if and only if
+All these map-like data items could be represented as a tag with an
+enclosed array (CBOR major type 4) of alternating key-value pairs, as
+in:
 
-- the ordering is unspecified, and,
-- the keys are unique.
-
-Otherwise, the map is encoded as an array (major type 4) of key-value pairs as illustrated in the following example using CBOR diagnostic notation:
-
+~~~CBORdiag
+129(["key1", 1, "key2", 2])
 ~~~
-272(["key1", 1, "key2", 2])
-~~~
+
+However, representing the key-value pairs as a CBOR map (major type 5)
+for those cases where this is possible enables generic decoders that
+are oblivious of these tags to represent the data in a more
+appropriate platform type.
+
+Specifically, the key-value pairs are represented as a map (major type
+5) if and only if
+
+- the ordering is unspecified and
+- the keys are unique;
+
+they are represented as an array (major type 4) of alternating keys
+and values otherwise.
 
 ## Related Tags (Informative)
 
@@ -164,13 +174,13 @@ Otherwise, the map is encoded as an array (major type 4) of key-value pairs as i
 
 Specification: https://github.com/shanewholloway/js-cbor-codec/blob/master/docs/CBOR-259-spec--explicit-maps.md
 
-The above proposed tag 128 may be used instead to guide a JavaScript decoder into intepreting a CBOR map as a JavaScript Map instead of an Object.
+The above proposed tag 128 may be used instead to guide a JavaScript decoder into interpreting a CBOR map as a JavaScript Map instead of an Object.
 
 ### Tag 275
 
 Specification: https://github.com/ecorm/cbor-tag-text-key-map
 
-The above proposed tag 132 may be used instead to guide a decoder into intepreting a CBOR map as a JavaScript-like Object having only text string keys. The decoder would have to verify the first key to establish that the map has uniform text string keys.
+The above proposed tag 132 may be used instead to guide a decoder into interpreting a CBOR map as a JavaScript-like Object having only text string keys. The decoder would have to verify the first key to establish that the map has uniform text string keys.
 
 ### Tag TBD279 ###
 
@@ -196,8 +206,8 @@ the use of group notation (enclosed in a CDDL map) to specify any of
 the above map-like data structures:
 
 | Name    | Purpose                |
-| .omm    | Ordered (Multi)map     |
-| .umm    | Unordered (Multi)map   |
+| .omm    | Ordered (Multi-)Map    |
+| .umm    | Unordered (Multi-)Map  |
 | .unique | Uniqueness requirement |
 {: #tbl-new title="New control operators in this document"}
 
@@ -205,19 +215,34 @@ the above map-like data structures:
 
 \[needs better examples]
 
+CDDL already can describe both arrays of alternating keys and values
+and maps (unordered and with unique keys).  The two control operators
+`.omm` and `.umm`
+introduced in this section enable the use of CDDL map notation for
+map-like types beyond actual maps, increasing readability and possibly
+even reusability.
+
+In a simple example that provides an unordered collection of zero or more
+home addresses and zero or more work addresses, each labeled as such,
+we use traditional map notation to describe that collection:
+
 ~~~cddl
-[* (text, any)] .omm {
+[* (text, any)] .umm {
   * home: address
   * work: address
+  $$more-addresses
 }
 ~~~
 
 The `.omm` and `.umm` control operators convert a group definition
 enclosed into a CDDL map given as a controller type into an array type
 given as the target type.
-The controller type is unwrapped ({{Section 3.7 of RFC8610}}) into a
-group.  Keys and values of the entries in that group are alternatingly
+The controller type given is unwrapped ({{Section 3.7 of RFC8610}}) into a
+group.  Keys and values of the entries in that group are then alternatingly
 matched as elements in the target array.
+Note that both target and controller type can contribute to the
+shaping of the data; declaring the key type as `text` limits what can
+be added to the `$$more-addresses` socket.
 
 `.omm` and `.umm` differ in the semantics of the array type created:
 `.omm` defines an ordered (multi)map, i.e., the order of the key/value
@@ -228,7 +253,7 @@ pairs in different orders are equivalent.
 Note that the ability to specify specific ("uniform") types is
 provided by the ability to specify the target type, as in the example above.
 
-Note that there is not stricly a need to define a control operator for building
+Note that there is not strictly a need to define a control operator for building
 unordered maps with non-duplicate keys, as existing CBOR maps already
 fill this role, however the use of a map type as the target is allowed for symmetry
 (implying uniqueness of the keys), allowing the following:
@@ -237,6 +262,7 @@ fill this role, however the use of a map type as the target is allowed for symme
 {* text => any} .umm {
   ? home: address
   ? work: address
+  $$more-addresses
 }
 ~~~
 
@@ -259,39 +285,43 @@ defines a `feature-set` as an array of zero or more `feature` values
 that need to be all different (as they are unique in `set`), and
 `ordered-map-with-unique-keys-and-values` as an array of zero pairs of
 keys and values, where the keys need to be unique among themselves and
-the values need to be unique among themselves.
+the values need to be unique among themselves (the latter example
+could employ an `.omm` or `.umm` operator to further restrict what can
+be in these keys and values).
 
-> Discussion: (*) while it is probably not a big problem to define the
-> "enclosing" container, it may be useful to actually define a larger
-> scope of the uniqueness.  CDDL currently does not have a way to
-> point to such a larger scope; we might define one ad hoc here or
-> leave that for later extension.
+> Discussion: (*) while it is probably not a big problem to define
+> what exactly the "enclosing" container is, it may be useful to
+> actually define a larger scope of the uniqueness.  CDDL currently
+> does not have a way to establish and point to such a larger scope;
+> we might define one ad hoc here or leave that for later extension.
 
 
 CDDL typenames
 ==========
 
-For the use with CDDL {{-cddl}}, the
-typenames defined in {{tag-cddl}} are recommended:
+For the use with CDDL {{-cddl}}, the typenames defined in {{tag-cddl}}
+are recommended unless there is a need for more specific shaping of
+the data.
 
 ~~~ CDDL
-| Tag | LSBs | Uniform Value | Uniform Key | Ordering  | Duplicate Keys Allowed | Data Item | Related Tag |
+anymap = {* any => any}
 
-tbd128 = #6.128({* any => any})
-tbd129 = #6.129([* (any, any)] .umm {* any => any})
-tbd130 = #6.130([* ((any .unique "mm"), any)] .omm {* any => any})
-tbd131 = #6.131([* (any, any)] .omm {* any => any})
+tbd128 = #6.128(anymap) ; key uniqueness implicit in map representation
+tbd129 = #6.129([* (any, any)] .umm anymap)
+tbd130 = #6.130([* ((any .unique "mm"), any)] .omm anymap)
+tbd131 = #6.131([* (any, any)] .omm anymap)
 tbd132<k> = #6.132({* k => any})
-tbd133<k> = #6.133([* (k, any)] .umm {* any => any})
-tbd134<k> = #6.134([* ((k .unique "mm"), any)] .omm {* any => any})
-tbd135<k> = #6.135([* (k, any)] .omm {* any => any})
+tbd133<k> = #6.133([* (k, any)] .umm anymap)
+tbd134<k> = #6.134([* ((k .unique "mm"), any)] .omm anymap)
+tbd135<k> = #6.135([* (k, any)] .omm anymap)
 tbd136<k,v> = #6.136({* k => v})
-tbd137<k,v> = #6.137([* (k, v)] .umm {* any => any})
-tbd139<k,v> = #6.138([* ((k .unique "mm"), v)] .omm {* any => any})
-tbd139<k,v> = #6.139([* (k, v)] .omm {* any => any})
+tbd137<k,v> = #6.137([* (k, v)] .umm anymap)
+tbd139<k,v> = #6.138([* ((k .unique "mm"), v)] .omm anymap)
+tbd139<k,v> = #6.139([* (k, v)] .omm anymap)
 ~~~
 {: #tag-cddl title="Recommended typenames for CDDL"}
 
+\[fill in better names for tbdnnn]
 
 IANA Considerations
 ==================
@@ -327,7 +357,7 @@ The *Encoding Tag* column in the following tables provide the recommended tag th
 use tag 132 for encoding an ECMAScript `Map` if all keys happen to be of the same type, however tag 128 is more general and applies to any `Map`. When encoding
 an ECMAScript `Object`, tag 128 would be technically correct but is too general; tag 132 best presents the fact that an `Object` has text keys only.
 
-The *Decodable Tags* colummn in the following tables, are for data items can be decoded into the destination container without having to inspect the following:
+The *Decodable Tags* column in the following tables, are for data items can be decoded into the destination container without having to inspect the following:
 
 - the uniqueness of the keys,
 - the ordering of the keys, and,
@@ -368,6 +398,7 @@ Container(s)           | Encoding Tag | Decodable Tags |
 `Sequence<Pair<D, D>>` | 131          | All            |
 
 Legend:
+
 - `K`: Static key type
 - `T`: Static value type
 - `D`: Suitable dynamic type, such as `std::any` or `std::variant`
@@ -384,7 +415,7 @@ Acknowledgements
 ================
 {: numbered="no"}
 
-The CBOR tags defined in this document were developed by Emile Cormier
+The CBOR tags defined in this document were developed by Emile Cormier under the sponsorship of Duc Luong,
 based on discussions with Kio Smallwood and Joe Hildebrand.
 The CDDL control operators defined in this document were developed by
 Carsten Bormann, Brendan Moran, and Henk Birkholz.
