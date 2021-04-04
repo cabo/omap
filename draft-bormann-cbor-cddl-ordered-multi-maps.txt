@@ -5,15 +5,15 @@
 Network Working Group                                    C. Bormann, Ed.
 Internet-Draft                                    Universität Bremen TZI
 Intended status: Informational                                  B. Moran
-Expires: 3 October 2021                                      Arm Limited
+Expires: 6 October 2021                                      Arm Limited
                                                              H. Birkholz
                                                           Fraunhofer SIT
                                                               E. Cormier
-                                                            1 April 2021
+                                                            4 April 2021
 
 
-              Ordered maps and multimaps in CBOR and CDDL
-           draft-bormann-cbor-cddl-ordered-multi-maps-latest
+                     Map-like data in CBOR and CDDL
+              draft-bormann-cbor-cddl-map-like-data-latest
 
 Abstract
 
@@ -64,7 +64,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 October 2021.
+   This Internet-Draft will expire on 6 October 2021.
 
 Copyright Notice
 
@@ -138,47 +138,55 @@ Table of Contents
 
    This document defines a consolidated set of CBOR tags for map-like
    entities involving key-value pairs.  These tags encode the following
-   meta-data concerning map-like entities:
+   meta-data concerning map-like data items:
 
-   *  the uniformity of the key and value types,
+   *  the homogeneity of the key and value types,
 
-   *  the preservation of the insertion order of the key-value pairs,
+   *  whether the order of the key-value pairs carries semantic value
+      ("ordered") or needs to be ignored ("unordered"),
 
    *  the uniqueness of the keys, and,
 
    *  the major type used to encode the key-value pairs.
 
+   Note that the term "ordered" as used in this document is distinct
+   from "sorted" -- "ordered" implies that the order in the data item
+   interchanged conveys a semantically relevant ordering, while a
+   property "sorted" can easily be established after interchange (by,
+   simply, sorting), less often needs to be indicated, and is more
+   complex to indicate as it may need details about the sorting
+
 2.1.  Summary
 
-   +===+====+========+=========+===========+===========+=====+=========+
-   |Tag|LSBs|Uniform | Uniform | Ordering  | Duplicate |Data | Related |
-   |   |    |Value   | Key     |           | Keys      |Item | Tag     |
-   |   |    |        |         |           | Allowed   |     |         |
-   +===+====+========+=========+===========+===========+=====+=========+
-   |128|0000|No      | No      | Unordered | No        |map  | 259     |
-   +---+----+--------+---------+-----------+-----------+-----+---------+
-   |129|0001|No      | No      | Unordered | Yes       |array| TDB280* |
-   +---+----+--------+---------+-----------+-----------+-----+---------+
-   |130|0010|No      | No      | Preserved | No        |array| TBD279* |
-   +---+----+--------+---------+-----------+-----------+-----+---------+
-   |131|0011|No      | No      | Preserved | Yes       |array|         |
-   +---+----+--------+---------+-----------+-----------+-----+---------+
-   |132|0100|No      | Yes     | Unordered | No        |map  | 275     |
-   +---+----+--------+---------+-----------+-----------+-----+---------+
-   |133|0101|No      | Yes     | Unordered | Yes       |array|         |
-   +---+----+--------+---------+-----------+-----------+-----+---------+
-   |134|0110|No      | Yes     | Preserved | No        |array|         |
-   +---+----+--------+---------+-----------+-----------+-----+---------+
-   |135|0111|No      | Yes     | Preserved | Yes       |array|         |
-   +---+----+--------+---------+-----------+-----------+-----+---------+
-   |136|1000|Yes     | Yes     | Unordered | No        |map  |         |
-   +---+----+--------+---------+-----------+-----------+-----+---------+
-   |137|1001|Yes     | Yes     | Unordered | Yes       |array|         |
-   +---+----+--------+---------+-----------+-----------+-----+---------+
-   |138|1010|Yes     | Yes     | Preserved | No        |array|         |
-   +---+----+--------+---------+-----------+-----------+-----+---------+
-   |139|1011|Yes     | Yes     | Preserved | Yes       |array|         |
-   +---+----+--------+---------+-----------+-----------+-----+---------+
+   +===+====+===========+============+=========+=========+=====+=======+
+   |Tag|LSBs|Homogeneous|Homogeneous |Ordering |Duplicate|Data |Related|
+   |   |    |Value      |Key         |         |Keys     |Item |Tag    |
+   |   |    |           |            |         |Allowed  |     |       |
+   +===+====+===========+============+=========+=========+=====+=======+
+   |128|0000|No         |No          |Unordered|No       |map  |259    |
+   +---+----+-----------+------------+---------+---------+-----+-------+
+   |129|0001|No         |No          |Unordered|Yes      |array|TDB280*|
+   +---+----+-----------+------------+---------+---------+-----+-------+
+   |130|0010|No         |No          |Ordered  |No       |array|TBD279*|
+   +---+----+-----------+------------+---------+---------+-----+-------+
+   |131|0011|No         |No          |Ordered  |Yes      |array|       |
+   +---+----+-----------+------------+---------+---------+-----+-------+
+   |132|0100|No         |Yes         |Unordered|No       |map  |275    |
+   +---+----+-----------+------------+---------+---------+-----+-------+
+   |133|0101|No         |Yes         |Unordered|Yes      |array|       |
+   +---+----+-----------+------------+---------+---------+-----+-------+
+   |134|0110|No         |Yes         |Ordered  |No       |array|       |
+   +---+----+-----------+------------+---------+---------+-----+-------+
+   |135|0111|No         |Yes         |Ordered  |Yes      |array|       |
+   +---+----+-----------+------------+---------+---------+-----+-------+
+   |136|1000|Yes        |Yes         |Unordered|No       |map  |       |
+   +---+----+-----------+------------+---------+---------+-----+-------+
+   |137|1001|Yes        |Yes         |Unordered|Yes      |array|       |
+   +---+----+-----------+------------+---------+---------+-----+-------+
+   |138|1010|Yes        |Yes         |Ordered  |No       |array|       |
+   +---+----+-----------+------------+---------+---------+-----+-------+
+   |139|1011|Yes        |Yes         |Ordered  |Yes      |array|       |
+   +---+----+-----------+------------+---------+---------+-----+-------+
 
               Table 1: New CBOR tags defined in this document
 
@@ -201,20 +209,20 @@ Table of Contents
    *  0b00xx Unspecified: There is no specified type for the map's keys
       and values
 
-   *  0b01xx Uniform Key: All keys have the same data type
+   *  0b01xx Homogeneous Key: All keys have the same data type
 
-   *  0b10xx Uniform Key/Value: All values have the same data type in
-      addition to all keys having the same data type (the types for keys
-      and values may be distinct).
+   *  0b10xx Homogeneous Key/Value: All values have the same data type
+      in addition to all keys having the same data type (the types for
+      keys and values may be distinct).
 
-   The semantics for uniformity shall be the same as for RFC8746
-   homogenous arrays (tag 41).  That is, "which CBOR data items
+   The semantics for homogeneity shall be the same as for RFC8746
+   homogeneous arrays (tag 41).  That is, "which CBOR data items
    constitute elements of the same application type is specific to the
    application" (RFC8746, subsection 3.2).
 
-   Maps with arbitrary keys and uniform values are considered unusual,
-   so they are left out of this specification in order to reduce the
-   number of tags allocated (12 instead of 16).
+   Maps with arbitrary keys and homogeneous values are considered
+   unusual, so they are left out of this specification in order to
+   reduce the number of tags allocated (12 instead of 16).
 
 2.3.  Ordering
 
@@ -273,15 +281,16 @@ Table of Contents
    The above defined tag 132 may be used instead to guide a decoder into
    interpreting a CBOR map as a JavaScript-like Object having only text
    string keys.  The decoder would have to verify the first key to
-   establish that the map has uniform text string keys.
+   establish that the map has homogeneous text string keys.
 
 2.6.3.  Tag TBD279
 
    Draft specification: https://github.com/Sekenre/cbor-ordered-map-
    spec/blob/master/CBOR_Ordered_Map.md
 
-   The above defined tag 130 may be used instead to encode maps where
-   the insertion order of key-value pairs must be preserved.
+   The above defined tag 130 may be used instead to encode map-like data
+   items where the order of the key-value pairs is semantically
+   significant.
 
 2.6.4.  Tag TDB280
 
@@ -349,7 +358,7 @@ Table of Contents
    unordered (multi)map, i.e., data items that present the same set of
    key/value pairs in different orders are equivalent.
 
-   Note that the ability to specify specific ("uniform") types is
+   Note that the ability to specify specific ("homogeneous") types is
    provided by the ability to specify the target type, as in the example
    above.
 
@@ -519,7 +528,8 @@ A.1.  Programming Language Containers (Informative)
    *  the data types of *every* keys/value pair.
 
    It may however be necessary to inspect the data types of the *first*
-   key-value pair in the case of tags representing uniform keys/values.
+   key-value pair in the case of tags representing homogeneous keys/
+   values.
 
 A.1.1.  ECMAScript
 
@@ -591,7 +601,7 @@ A.1.3.  C++
 
    *  "MultiMap": "std::multimap" or "std::unordered_multimap"
 
-   *  "Sequence": Sequence container that preserves order (e.g.
+   *  "Sequence": Sequence container that maintains order (e.g.
       "std::vector")
 
    *  "Pair": Object containing a key and a value, such as "std::pair",
