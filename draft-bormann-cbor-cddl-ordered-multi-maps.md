@@ -90,29 +90,39 @@ and CBOR major type 5; this is not called out explicitly.
 
 # CBOR tags for map-like data items
 
-This document defines a consolidated set of CBOR tags for map-like entities involving key-value pairs. These tags encode the following meta-data concerning map-like entities:
+This document defines a consolidated set of CBOR tags for map-like
+entities involving key-value pairs. These tags encode the following
+meta-data concerning map-like data items:
 
 - the homogeneity of the key and value types,
-- the preservation of the insertion order of the key-value pairs,
+- whether the order of the key-value pairs carries semantic value
+  ("ordered") or needs to be ignored ("unordered"),
 - the uniqueness of the keys, and,
 - the major type used to encode the key-value pairs.
+
+Note that the term "ordered" as used in this document is distinct from
+"sorted" -- "ordered" implies that the order in the data item
+interchanged conveys a semantically relevant ordering, while a
+property "sorted" can easily be established after interchange (by,
+simply, sorting), less often needs to be indicated, and is more
+complex to indicate as it may need details about the sorting
 
 ## Summary
 
 | Tag | LSBs | Homogeneous Value | Homogeneous Key | Ordering  | Duplicate Keys Allowed | Data Item | Related Tag |
-| --- | ---- | ------------- | ----------- | --------- | ---------------------- | --------- | ----------- |
-| 128 | 0000 | No            | No          | Unordered | No                     | map       | 259         |
-| 129 | 0001 | No            | No          | Unordered | Yes                    | array     | TDB280*     |
-| 130 | 0010 | No            | No          | Preserved | No                     | array     | TBD279*     |
-| 131 | 0011 | No            | No          | Preserved | Yes                    | array     |             |
-| 132 | 0100 | No            | Yes         | Unordered | No                     | map       | 275         |
-| 133 | 0101 | No            | Yes         | Unordered | Yes                    | array     |             |
-| 134 | 0110 | No            | Yes         | Preserved | No                     | array     |             |
-| 135 | 0111 | No            | Yes         | Preserved | Yes                    | array     |             |
-| 136 | 1000 | Yes           | Yes         | Unordered | No                     | map       |             |
-| 137 | 1001 | Yes           | Yes         | Unordered | Yes                    | array     |             |
-| 138 | 1010 | Yes           | Yes         | Preserved | No                     | array     |             |
-| 139 | 1011 | Yes           | Yes         | Preserved | Yes                    | array     |             |
+| --- | ---- | -------------     | -----------     | --------- | ---------------------- | --------- | ----------- |
+| 128 | 0000 | No                | No              | Unordered | No                     | map       | 259         |
+| 129 | 0001 | No                | No              | Unordered | Yes                    | array     | TDB280*     |
+| 130 | 0010 | No                | No              | Ordered   | No                     | array     | TBD279*     |
+| 131 | 0011 | No                | No              | Ordered   | Yes                    | array     |             |
+| 132 | 0100 | No                | Yes             | Unordered | No                     | map       | 275         |
+| 133 | 0101 | No                | Yes             | Unordered | Yes                    | array     |             |
+| 134 | 0110 | No                | Yes             | Ordered   | No                     | array     |             |
+| 135 | 0111 | No                | Yes             | Ordered   | Yes                    | array     |             |
+| 136 | 1000 | Yes               | Yes             | Unordered | No                     | map       |             |
+| 137 | 1001 | Yes               | Yes             | Unordered | Yes                    | array     |             |
+| 138 | 1010 | Yes               | Yes             | Ordered   | No                     | array     |             |
+| 139 | 1011 | Yes               | Yes             | Ordered   | Yes                    | array     |             |
 {: #tag-new title="New CBOR tags defined in this document"}
 
 *TBD279: https://github.com/Sekenre/cbor-ordered-map-spec/blob/master/CBOR_Ordered_Map.md
@@ -191,7 +201,8 @@ The above defined tag 132 may be used instead to guide a decoder into interpreti
 
 Draft specification: https://github.com/Sekenre/cbor-ordered-map-spec/blob/master/CBOR_Ordered_Map.md
 
-The above defined tag 130 may be used instead to encode maps where the insertion order of key-value pairs must be preserved.
+The above defined tag 130 may be used instead to encode map-like data items where the
+order of the key-value pairs is semantically significant.
 
 ### Tag TDB280 ###
 
@@ -429,7 +440,7 @@ Legend:
 - `D`: Suitable dynamic type, such as `std::any` or `std::variant`
 - `Map`: `std::map` or `std::unordered_map`
 - `MultiMap`: `std::multimap` or `std::unordered_multimap`
-- `Sequence`: Sequence container that preserves order (e.g. `std::vector`)
+- `Sequence`: Sequence container that maintains order (e.g. `std::vector`)
 - `Pair`: Object containing a key and a value, such as `std::pair`, or `std::tuple`.
 
 Note that a C++ `std::map` stores its key-value pairs in a sorted fashion, and
