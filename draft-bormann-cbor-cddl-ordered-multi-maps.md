@@ -1,9 +1,9 @@
 ---
 title: >
-  Ordered maps and multimaps in CBOR and CDDL
-abbrev: New maps in CBOR and CDDL
-docname: draft-bormann-cbor-cddl-ordered-multi-maps-latest
-date: 2021-04-01
+  Map-like data in CBOR and CDDL
+abbrev: Map-like data in CBOR and CDDL
+docname: draft-bormann-cbor-cddl-map-like-data-latest
+date: 2021-04-04
 
 stand_alone: true
 
